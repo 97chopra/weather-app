@@ -1,60 +1,64 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-    font-family: 'Segoe UI', sans-serif;
-    background: #1a1a2e;
-    color: #ffffff;
-    min-height:100vh;
-    padding:20px;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f7f6ff;
+  color: #1a1a2e;
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 480px;
+  margin: 0 auto;
 }
 
 /* Search Bar */
-.search-bar{
-    display:flex;
-    gap: 10px;
-    margin-bottom:20px;
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.search-bar input{
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: none;
-    background: #16213e;
-    color: #ffffff;
-    font-size: 16px;
-    outline: none;
+.search-bar input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #ffffff;
+  color: #1a1a2e;
+  font-size: 15px;
+  outline: none;
 }
 
 .search-bar input::placeholder {
-    color: #888;
-
+  color: #aaa;
 }
+
 .search-bar button {
   padding: 12px 20px;
   border-radius: 10px;
   border: none;
   background: #1D9E75;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
 }
 
 .search-bar button:hover {
   background: #158a63;
 }
+
 /* Alert Box */
 .alert-box {
-  background: #854F0B;
-  color: #FAEEDA;
+  background: #fff8e1;
+  color: #854F0B;
   padding: 10px 16px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   margin-bottom: 16px;
+  border: 1px solid #EF9F27;
 }
 
 /* Weather Card */
@@ -64,19 +68,19 @@ body{
   align-items: center;
   background: #1D9E75;
   border-radius: 16px;
-  padding: 20px;
+  padding: 24px 20px;
   margin-bottom: 16px;
 }
 
 .city-name {
-  font-size: 14px;
+  font-size: 13px;
   color: #9FE1CB;
   margin-bottom: 6px;
 }
 
 .temperature {
-  font-size: 48px;
-  font-weight: 700;
+  font-size: 52px;
+  font-weight: 600;
   color: #ffffff;
 }
 
@@ -85,25 +89,28 @@ body{
 }
 
 .condition {
-  font-size: 16px;
+  font-size: 15px;
   color: #E1F5EE;
   margin-bottom: 6px;
 }
 
 .extra {
-  font-size: 13px;
+  font-size: 12px;
   color: #9FE1CB;
+  margin-bottom: 3px;
 }
 
 /* Hourly Forecast */
 .hourly-section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .hourly-section h3 {
-  font-size: 15px;
-  color: #9FE1CB;
+  font-size: 13px;
+  color: #6b6b80;
   margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .hourly-row {
@@ -113,23 +120,24 @@ body{
 }
 
 .hour-card {
-  background: #16213e;
+  background: #ffffff;
+  border: 1px solid #e8e8f0;
   border-radius: 10px;
   padding: 10px 16px;
   text-align: center;
-  min-width: 70px;
+  min-width: 65px;
 }
 
 .hour-time {
   font-size: 11px;
-  color: #888;
+  color: #aaa;
   margin-bottom: 6px;
 }
 
 .hour-temp {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  color: #ffffff;
+  color: #1a1a2e;
 }
 
 /* 7 Day Forecast */
@@ -138,9 +146,11 @@ body{
 }
 
 .forecast-section h3 {
-  font-size: 15px;
-  color: #9FE1CB;
+  font-size: 13px;
+  color: #6b6b80;
   margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .forecast-row {
@@ -150,21 +160,22 @@ body{
 }
 
 .day-card {
-  background: #16213e;
+  background: #ffffff;
+  border: 1px solid #e8e8f0;
   border-radius: 10px;
   padding: 10px 14px;
   text-align: center;
-  min-width: 60px;
+  min-width: 58px;
 }
 
 .day-name {
   font-size: 11px;
-  color: #888;
+  color: #aaa;
   margin-bottom: 6px;
 }
 
 .day-temp {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  color: #ffffff;
+  color: #1a1a2e;
 }
