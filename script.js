@@ -1,13 +1,10 @@
 
-// WEATHER APP 
-// API KEY 
-const API_KEY = '61bc1dd461d7e51bf8b8d01c15be9abd';
-
-// BASE URLs 
-// Current weather endpoint
-const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
-// 3-hourly forecast endpoint (gives us hourly + 7-day data)
+//  API KEY & BASE URLs 
+const API_KEY      = '61bc1dd461d7e51bf8b8d01c15be9abd';
+const BASE_URL     = 'https://api.openweathermap.org/data/2.5/weather';
 const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+const GEO_URL      = 'https://api.openweathermap.org/geo/1.0/direct';
+
 
 //DOM ELEMENTS 
 const cityInput   = document.getElementById('city-input');
@@ -17,31 +14,79 @@ const temperature = document.getElementById('temperature');
 const condition   = document.getElementById('condition');
 const humidity    = document.getElementById('humidity');
 const wind        = document.getElementById('wind');
-const alertBox    = document.getElementById('alert-box');   // used properly now
-const hourlyList  = document.getElementById('hourly-list'); // hourly forecast container
-const dailyList   = document.getElementById('daily-list');  // 7-day forecast container
+const alertBox    = document.getElementById('alert-box');
+const hourlyList  = document.getElementById('hourly-list');
+const dailyList   = document.getElementById('daily-list');
 
-// HELPER: Show an in-page error instead of browser alert()
 
-function showError(message) {
-  alertBox.textContent = message;
-  alertBox.style.display = 'block';
 
-  // Auto-hide the error after 4 seconds
-  setTimeout(() => {
-    alertBox.style.display = 'none';
-  }, 4000);
+const COUNTRY_MAP = {
+  'afghanistan': 'AF', 'albania': 'AL', 'algeria': 'DZ', 'argentina': 'AR',
+  'australia': 'AU', 'austria': 'AT', 'bangladesh': 'BD', 'belgium': 'BE',
+  'brazil': 'BR', 'canada': 'CA', 'chile': 'CL', 'china': 'CN',
+  'colombia': 'CO', 'croatia': 'HR', 'czech republic': 'CZ', 'denmark': 'DK',
+  'egypt': 'EG', 'ethiopia': 'ET', 'finland': 'FI', 'france': 'FR',
+  'germany': 'DE', 'ghana': 'GH', 'greece': 'GR', 'hungary': 'HU',
+  'india': 'IN', 'indonesia': 'ID', 'iran': 'IR', 'iraq': 'IQ',
+  'ireland': 'IE', 'israel': 'IL', 'italy': 'IT', 'japan': 'JP',
+  'jordan': 'JO', 'kenya': 'KE', 'malaysia': 'MY', 'mexico': 'MX',
+  'morocco': 'MA', 'myanmar': 'MM', 'nepal': 'NP', 'netherlands': 'NL',
+  'new zealand': 'NZ', 'nigeria': 'NG', 'norway': 'NO', 'pakistan': 'PK',
+  'peru': 'PE', 'philippines': 'PH', 'poland': 'PL', 'portugal': 'PT',
+  'romania': 'RO', 'russia': 'RU', 'saudi arabia': 'SA', 'serbia': 'RS',
+  'singapore': 'SG', 'south africa': 'ZA', 'south korea': 'KR',
+  'spain': 'ES', 'sri lanka': 'LK', 'sudan': 'SD', 'sweden': 'SE',
+  'switzerland': 'CH', 'taiwan': 'TW', 'tanzania': 'TZ', 'thailand': 'TH',
+  'turkey': 'TR', 'turkiye': 'TR', 'ukraine': 'UA',
+  'united kingdom': 'GB', 'uk': 'GB', 'england': 'GB',
+  'united states': 'US', 'usa': 'US', 'america': 'US',
+  'uzbekistan': 'UZ', 'venezuela': 'VE', 'vietnam': 'VN', 'zimbabwe': 'ZW',
+};
+
+
+
+function parseInput(rawInput) {
+  const parts = rawInput.split(',');
+
+  if (parts.length >= 2) {
+    
+    const cityPart   = parts.slice(0, parts.length - 1).join(',').trim();
+    const countryRaw = parts[parts.length - 1].trim().toLowerCase();
+
+    
+    if (countryRaw.length === 2) {
+      return { cityPart, countryCode: countryRaw.toUpperCase() };
+    }
+
+    
+    const mapped = COUNTRY_MAP[countryRaw];
+    if (mapped) {
+      return { cityPart, countryCode: mapped };
+    }
+
+    
+    return { cityPart, countryCode: countryRaw.toUpperCase() };
+  }
+
+  
+  return { cityPart: rawInput.trim(), countryCode: 'NZ' };
 }
 
-// HELPER: Hide the error box when a search succeeds
+
+
+function showError(message) {
+  alertBox.textContent  = message;
+  alertBox.style.display = 'block';
+  setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+}
+
+
+
 function hideError() {
   alertBox.style.display = 'none';
 }
 
 
-
-// HELPER: Show a loading state so UI doesn't look broken
-//         while data is being fetched from the API
 
 function showLoading() {
   cityName.textContent    = 'Loading...';
@@ -55,58 +100,45 @@ function showLoading() {
 
 
 
-// HELPER: Convert wind speed from m/s → km/h
-//         OpenWeatherMap always returns wind in m/s,
-//         NOT km/h — multiplying by 3.6 does the conversion
-
 function msToKmh(ms) {
   return Math.round(ms * 3.6);
 }
 
 
 
-// HELPER: Convert a UTC timestamp + timezone offset
-//         into a real local time string for that city
-//         (fixes the "wrong time" bug)
-
 function getLocalTime(utcTimestamp, timezoneOffsetSeconds) {
-  // utcTimestamp = seconds since epoch (from API)
-  // timezoneOffsetSeconds = city's UTC offset in seconds (from API)
-  const localMs = (utcTimestamp + timezoneOffsetSeconds) * 1000;
+  // utcTimestamp = seconds since Unix epoch (from API)
+  // timezoneOffsetSeconds = city's offset from UTC in seconds
+  const localMs   = (utcTimestamp + timezoneOffsetSeconds) * 1000;
   const localDate = new Date(localMs);
 
-  // Format as "Mon, 3:45 PM"
-  return localDate.toUTCString().replace(' GMT', ''); // strip GMT so it shows local
+  
+  return localDate.toUTCString().replace(' GMT', '');
 }
 
 
 
-// HELPER: Format a forecast timestamp into a readable hour
-//         e.g. "3 PM", "6 PM" — used in hourly forecast row
-
 function formatHour(dtText, timezoneOffsetSeconds) {
-  // dtText from forecast API looks like "2026-04-18 15:00:00"
-  const utcMs = new Date(dtText + ' UTC').getTime();
+  
+  const utcMs   = new Date(dtText + ' UTC').getTime();
   const localMs = utcMs + (timezoneOffsetSeconds * 1000);
-  const d = new Date(localMs);
-  const hours = d.getUTCHours();
-  const ampm  = hours >= 12 ? 'PM' : 'AM';
-  const h     = hours % 12 || 12;
+  const d       = new Date(localMs);
+  const hours   = d.getUTCHours();
+  const ampm    = hours >= 12 ? 'PM' : 'AM';
+  const h       = hours % 12 || 12;
   return `${h} ${ampm}`;
 }
 
 
 
-// HELPER: Format a forecast timestamp into a day name
-//         e.g. "Mon", "Tue" — used in 7-day forecast row
-
 function formatDay(dtText, timezoneOffsetSeconds) {
-  const utcMs  = new Date(dtText + ' UTC').getTime();
+  const utcMs   = new Date(dtText + ' UTC').getTime();
   const localMs = utcMs + (timezoneOffsetSeconds * 1000);
-  const d = new Date(localMs);
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const d       = new Date(localMs);
+  const days    = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return days[d.getUTCDay()];
 }
+
 
 function getWeatherIcon(conditionMain) {
   const icons = {
@@ -126,51 +158,110 @@ function getWeatherIcon(conditionMain) {
     'Squall'       : '💨',
     'Tornado'      : '🌪️',
   };
-  return icons[conditionMain] || '🌡️'; 
+  return icons[conditionMain] || '🌡️';
 }
 
 
-// FETCH 1: Get current weather for a city
+
+async function geocodeCity(rawInput) {
+  const { cityPart, countryCode } = parseInput(rawInput);
+
+  
+  const query = countryCode
+    ? `${cityPart},${countryCode}`
+    : cityPart;
+
+  
+  const url = `${GEO_URL}?q=${encodeURIComponent(query)}&limit=5&appid=${API_KEY}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Location not found. Try "Auckland" or add a country e.g. "Hamilton, AU"`);
+  }
+
+  const results = await response.json();
+
+  
+  if (!results || results.length === 0) {
+    const fallbackUrl = `${GEO_URL}?q=${encodeURIComponent(cityPart)}&limit=5&appid=${API_KEY}`;
+    const fallbackRes = await fetch(fallbackUrl);
+    const fallbackData = await fallbackRes.json();
+
+    if (!fallbackData || fallbackData.length === 0) {
+      throw new Error(
+        `"${cityPart}" not found. Try the nearest main city e.g. "Auckland", or add a country e.g. "Hamilton, AU".`
+      );
+    }
+
+    
+    if (countryCode === 'NZ') {
+      const nzMatch = fallbackData.find(r => r.country === 'NZ');
+      if (nzMatch) return nzMatch;
+    }
+
+    return fallbackData[0];
+  }
+
+  
+  if (countryCode === 'NZ') {
+    const nzMatch = results.find(r => r.country === 'NZ');
+    if (nzMatch) return nzMatch;
+  }
+
+  
+  return results[0];
+}
+
+
 
 async function getCurrentWeather(city) {
-  
-  const query = city.includes(',') ? city : city;
+  // Step 1 — geocode to get exact lat/lon
+  const geo = await geocodeCity(city);
+  const { lat, lon, name, country, state } = geo;
 
-  const url = `${BASE_URL}?q=${encodeURIComponent(query)}&appid=${API_KEY}&units=metric&lang=en`;
+  // Build a nice display name that includes suburb info
+  // e.g. "Newmarket, Auckland, NZ" instead of just "Auckland, NZ"
+  geo.displayName = state
+    ? `${name}, ${state}, ${country}`
+    : `${name}, ${country}`;
 
-  
+  // Step 2 — fetch weather by coordinates (precise, works for suburbs)
+  const url = `${BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=en`;
+
   const response = await fetch(url);
   if (!response.ok) {
-    // 404 = city not found, 401 = bad API key, etc.
-    throw new Error(`City not found (${response.status}). Please check the spelling and try again.`);
+    throw new Error(`Weather data not available for "${name}". Please try again.`);
   }
 
   const data = await response.json();
-
-  
   if (Number(data.cod) !== 200) {
-    throw new Error(data.message || 'City not found. Please try again.');
+    throw new Error(data.message || 'Weather not available. Please try again.');
   }
+
+  // Attach display name so the weather card shows the right location
+  data.displayName = geo.displayName;
 
   return data;
 }
 
 
-
-// FETCH 2: Get 5-day / 3-hourly forecast for a city
 
 async function getForecast(city) {
-  const url = `${FORECAST_URL}?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric&lang=en`;
+  // Step 1 — geocode to get exact lat/lon
+  const geo = await geocodeCity(city);
+  const { lat, lon } = geo;
+
+  // Step 2 — fetch forecast by coordinates
+  const url = `${FORECAST_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=en`;
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Forecast not available (${response.status}).`);
+    throw new Error(`Forecast not available for this location. Please try again.`);
   }
 
   const data = await response.json();
-
   if (Number(data.cod) !== 200) {
-    throw new Error(data.message || 'Forecast not available.');
+    throw new Error(data.message || 'Forecast not available. Please try again.');
   }
 
   return data;
@@ -178,39 +269,34 @@ async function getForecast(city) {
 
 
 
-// RENDER: Update the current weather card on the page
-
 function renderCurrentWeather(data) {
-  // data.timezone = offset in seconds from UTC for this city
   const localTime = getLocalTime(data.dt, data.timezone);
 
-  cityName.textContent    = `${data.name}, ${data.sys.country}`;
+  // Use geocoded displayName for accurate suburb-level location
+  // Falls back to API name if displayName wasn't set
+  cityName.textContent    = data.displayName || `${data.name}, ${data.sys.country}`;
   temperature.textContent = `${Math.round(data.main.temp)}°C`;
   condition.textContent   = `${getWeatherIcon(data.weather[0].main)} ${data.weather[0].description}`;
-
   humidity.textContent    = `H: ${data.main.humidity}%`;
 
-  // Convert m/s → km/h (was showing wrong values before)
+  // Wind converted from m/s → km/h (was wrong before)
   wind.textContent        = `W: ${msToKmh(data.wind.speed)} km/h`;
 
-  // Optional: show local time if you have an element for it
+  // Show city's real local time (not browser time)
   const timeEl = document.getElementById('local-time');
   if (timeEl) timeEl.textContent = localTime;
 }
 
 
 
-// RENDER: Build the hourly forecast row from forecast data
-//         The /forecast endpoint returns data every 3 hours —
-
 function renderHourlyForecast(forecastData, timezoneOffset) {
-  if (!hourlyList) return; // skip if element doesn't exist in HTML
+  if (!hourlyList) return;
 
-  // forecastData.list = array of 3-hourly entries
-  // We only want the next 4 entries (now, +3h, +6h, +9h)
+  // Slice first 4 entries = next 12 hours
   const next4 = forecastData.list.slice(0, 4);
 
   hourlyList.innerHTML = next4.map((entry, index) => {
+    
     const label = index === 0 ? 'Now' : formatHour(entry.dt_txt, timezoneOffset);
     const temp  = Math.round(entry.main.temp);
     const icon  = getWeatherIcon(entry.weather[0].main);
@@ -227,29 +313,24 @@ function renderHourlyForecast(forecastData, timezoneOffset) {
 
 
 
-// RENDER: Build the 7-day forecast section
-//         The /forecast endpoint gives 3-hourly data for 5 days.
-
-
 function renderDailyForecast(forecastData, timezoneOffset) {
-  if (!dailyList) return; // skip if element doesn't exist in HTML
+  if (!dailyList) return;
 
   const list = forecastData.list;
 
-  // Group entries by day, pick the one closest to 12:00
+  
   const byDay = {};
   list.forEach(entry => {
-    // dt_txt looks like "2026-04-18 15:00:00"
-    const dateKey = entry.dt_txt.split(' ')[0]; // "2026-04-18"
+    const dateKey = entry.dt_txt.split(' ')[0];       // "2026-04-18"
     const hour    = parseInt(entry.dt_txt.split(' ')[1]); // 15
 
-    // Keep the entry closest to noon for each day
     if (!byDay[dateKey] || Math.abs(hour - 12) < Math.abs(byDay[dateKey].hour - 12)) {
       byDay[dateKey] = { entry, hour };
     }
   });
 
-  // Convert to array and skip today (index 0) since current card covers it
+  
+  // Show up to 7 days
   const days = Object.values(byDay).slice(1, 8);
 
   dailyList.innerHTML = days.map(({ entry }) => {
@@ -273,21 +354,21 @@ function renderDailyForecast(forecastData, timezoneOffset) {
 
 
 
-// MAIN: Orchestrates both fetches and all rendering
+// MAIN: Orchestrates everything — geocode → fetch → render
+// Runs both API calls in parallel with Promise.all for speed
 
 async function loadWeather(city) {
-  // Show loading state immediately so UI isn't blank/stale
-  showLoading();
-  hideError();
+  showLoading(); // show dashes immediately
+  hideError();   // clear any previous error
 
   try {
-    // Run both API calls at the same time for speed
+    
     const [currentData, forecastData] = await Promise.all([
       getCurrentWeather(city),
       getForecast(city)
     ]);
 
-    // Timezone offset (seconds) — same for both since same city
+    // Timezone offset in seconds — same city so same for both
     const tzOffset = currentData.timezone;
 
     // Render all three sections
@@ -296,32 +377,36 @@ async function loadWeather(city) {
     renderDailyForecast(forecastData, tzOffset);
 
   } catch (error) {
-    // FIX: Log the real error for debugging, show friendly message to user
+    //debugging 
     console.error('Weather load failed:', error);
+
+    
     showError(error.message || 'Something went wrong. Please try again.');
-    showLoading(); // reset UI back to blank dashes
+
+    
+    showLoading();
   }
 }
 
 
 
-// Single handleSearch function — no duplicate logic
-
 function handleSearch() {
   const city = cityInput.value.trim();
   if (!city) {
-    showError('Please enter a city name.');
+    showError('Please enter a city or suburb name.');
     return;
   }
   loadWeather(city);
 }
 
-// Attach to button click
+// Button click
 searchBtn.addEventListener('click', handleSearch);
 
-// Attach to Enter key inside the input
+// Enter key inside the input field
 cityInput.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') handleSearch();
 });
 
-loadWeather('Auckland,NZ');
+
+
+loadWeather('Auckland');
