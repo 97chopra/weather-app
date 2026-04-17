@@ -1,108 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Weather App</title>
-        <link rel="stylesheet" href="style.css" />
-        </head><head></head>
-        <body>
-            <!-- Search Bar-->
-             <div class="search-bar">
-                <input type="text" id="city-input" placeholder="Search City..." />
-                <button id="search-btn">Search</button>
-             </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css" />
+    
+</head>
+<body>
 
-             <!---Weather Alert-->
-             <div class="alert-box" id="alert-box">
-                ⚠ Heavy rain expected at 4pm
-             </div>
-
-             <!--Main weather Card-->
-             <div class="weather-card" id="weather-card">
-                <div class="left">
-                    <p class = "city-name" id="city-name">Auckland NewZealand</p>
-                    <hi class="teamperature" id="temperature">18°C</hi>
-                </div>
-                <div class="right">
-                    <p class="condition" id="condition">Cloudy</p>
-                    <p class="extra" id="humidity">H: 72%</p>
-                    <p class="extra" id="wind">W: 14 km/h</p>
-                </div>
-             </div>
-             <!-- Hourly Forecast -->
-  <div class="hourly-section">
-    <h3>Hourly Forecast</h3>
-    <div class="hourly-row" id="hourly-row">
-
-      <div class="hour-card">
-        <p class="hour-time">Now</p>
-        <p class="hour-temp">18°</p>
-      </div>
-
-      <div class="hour-card">
-        <p class="hour-time">3 PM</p>
-        <p class="hour-temp">17°</p>
-      </div>
-
-      <div class="hour-card">
-        <p class="hour-time">6 PM</p>
-        <p class="hour-temp">15°</p>
-      </div>
-
-      <div class="hour-card">
-        <p class="hour-time">9 PM</p>
-        <p class="hour-temp">13°</p>
-      </div>
-
+    <!-- ─── Search Bar ──────────────────────────────────────────── -->
+    <div class="search-bar">
+        <input type="text" id="city-input" placeholder="Search City..." />
+        <button id="search-btn">Search</button>
     </div>
-  </div>
 
-  <!-- 7 Day Forecast -->
-  <div class="forecast-section">
-    <h3>7-Day Forecast</h3>
-    <div class="forecast-row" id="forecast-row">
+    <!-- ─── Weather Alert Box ───────────────────────────────────── -->
+    <!-- FIX 2: Removed the hardcoded alert text "⚠ Heavy rain expected at 4pm"
+                That was static fake content. The JS will now write real
+                error messages into this box via alertBox.textContent.
+                Also added style="display:none" so it stays hidden until
+                an actual error occurs — before this it was always visible. -->
+    <div class="alert-box" id="alert-box" style="display: none;"></div>
 
-      <div class="day-card">
-        <p class="day-name">Mon</p>
-        <p class="day-temp">17°</p>
-      </div>
+    <!-- ─── Main Weather Card ───────────────────────────────────── -->
+    <div class="weather-card" id="weather-card">
+        <div class="left">
+            <p class="city-name" id="city-name">Loading...</p>
 
-      <div class="day-card">
-        <p class="day-name">Tue</p>
-        <p class="day-temp">20°</p>
-      </div>
+            
+            <h1 class="temperature" id="temperature">--°C</h1>
 
-      <div class="day-card">
-        <p class="day-name">Wed</p>
-        <p class="day-temp">15°</p>
-      </div>
-
-      <div class="day-card">
-        <p class="day-name">Thu</p>
-        <p class="day-temp">19°</p>
-      </div>
-
-      <div class="day-card">
-        <p class="day-name">Fri</p>
-        <p class="day-temp">22°</p>
-      </div>
-
-      <div class="day-card">
-        <p class="day-name">Sat</p>
-        <p class="day-temp">18°</p>
-      </div>
-
-      <div class="day-card">
-        <p class="day-name">Sun</p>
-        <p class="day-temp">21°</p>
-      </div>
-
+            
+            <p class="local-time" id="local-time">--</p>
+        </div>
+        <div class="right">
+            <p class="condition" id="condition">--</p>
+            <p class="extra" id="humidity">H: --%</p>
+            <p class="extra" id="wind">W: -- km/h</p>
+        </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <!-- ─── Hourly Forecast ─────────────────────────────────────── -->
+    <div class="hourly-section">
+        <h3>Hourly Forecast</h3>
 
-        </body>
-    </head>
+        
+        <div class="hourly-row" id="hourly-list"></div>
+    </div>
+
+    <!-- ─── 7-Day Forecast ──────────────────────────────────────── -->
+    <div class="forecast-section">
+        <h3>7-Day Forecast</h3>
+
+        <!-- FIX 6: Same as hourly — removed all 7 hardcoded <div class="day-card">
+                    blocks (Mon 17°, Tue 20°... all fake static values).
+                    The JS renderDailyForecast() function fills this in from
+                    real API data.
+                    Changed id from "forecast-row" to "daily-list" to match
+                    what the JS file expects. -->
+        <div class="forecast-row" id="daily-list"></div>
+    </div>
+
+    <!-- ─── Script ──────────────────────────────────────────────── -->
+    
+    <script src="script.js"></script>
+
+    
+</body>
 </html>
