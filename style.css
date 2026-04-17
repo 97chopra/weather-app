@@ -1,9 +1,13 @@
+
+/* ─── RESET ─────────────────────────────────────────────────── */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+
+/*  BODY */
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #f7f6ff;
@@ -14,7 +18,8 @@ body {
   margin: 0 auto;
 }
 
-/* Search Bar */
+
+/* SEARCH BAR  */
 .search-bar {
   display: flex;
   gap: 10px;
@@ -30,6 +35,13 @@ body {
   color: #1a1a2e;
   font-size: 15px;
   outline: none;
+  
+  transition: border-color 0.2s;
+}
+
+.search-bar input:focus {
+  
+  border-color: #1D9E75;
 }
 
 .search-bar input::placeholder {
@@ -44,13 +56,23 @@ body {
   color: #ffffff;
   font-size: 15px;
   cursor: pointer;
+  
+  transition: background 0.2s;
 }
 
 .search-bar button:hover {
   background: #158a63;
 }
 
-/* Alert Box */
+
+.search-bar button:active {
+  background: #0f6e56;
+  transform: scale(0.98);
+}
+
+
+/* ALERT BOX */
+
 .alert-box {
   background: #fff8e1;
   color: #854F0B;
@@ -59,9 +81,12 @@ body {
   font-size: 13px;
   margin-bottom: 16px;
   border: 1px solid #EF9F27;
+  
+  transition: opacity 0.3s;
 }
 
-/* Weather Card */
+
+/* MAIN WEATHER CARD */
 .weather-card {
   display: flex;
   justify-content: space-between;
@@ -75,13 +100,27 @@ body {
 .city-name {
   font-size: 13px;
   color: #9FE1CB;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
+
+
+.local-time {
+  font-size: 11px;
+  color: #9FE1CB;
+  opacity: 0.8;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
 
 .temperature {
   font-size: 52px;
   font-weight: 600;
   color: #ffffff;
+  /* FIX 9: h1 tags have a default font-weight of bold and add extra
+             margin — reset both so it sits flush inside the card */
+  margin: 0;
+  line-height: 1;
 }
 
 .right {
@@ -100,7 +139,8 @@ body {
   margin-bottom: 3px;
 }
 
-/* Hourly Forecast */
+
+/* HOURLY FORECAST  */
 .hourly-section {
   margin-bottom: 16px;
 }
@@ -117,30 +157,52 @@ body {
   display: flex;
   gap: 10px;
   overflow-x: auto;
+  
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+  padding-bottom: 4px;
 }
 
-.hour-card {
+.hourly-row::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari */
+}
+
+
+.hour-card,
+.hour-item {
   background: #ffffff;
   border: 1px solid #e8e8f0;
   border-radius: 10px;
   padding: 10px 16px;
   text-align: center;
   min-width: 65px;
+ 
+  flex-shrink: 0;
 }
+
 
 .hour-time {
   font-size: 11px;
   color: #aaa;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.hour-icon {
+  font-size: 18px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .hour-temp {
   font-size: 15px;
   font-weight: 500;
   color: #1a1a2e;
+  display: block;
 }
 
-/* 7 Day Forecast */
+
+/* 7-DAY FORECAST*/
 .forecast-section {
   margin-bottom: 20px;
 }
@@ -157,25 +219,86 @@ body {
   display: flex;
   gap: 10px;
   overflow-x: auto;
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 4px;
 }
 
-.day-card {
+.forecast-row::-webkit-scrollbar {
+  display: none;
+}
+
+
+.day-card,
+.day-item {
   background: #ffffff;
   border: 1px solid #e8e8f0;
   border-radius: 10px;
   padding: 10px 14px;
   text-align: center;
   min-width: 58px;
+  flex-shrink: 0;   
 }
+
 
 .day-name {
   font-size: 11px;
   color: #aaa;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  display: block;
 }
+
+.day-icon {
+  font-size: 18px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.day-desc {
+  font-size: 10px;
+  color: #aaa;
+  display: block;
+  margin-bottom: 4px;
+  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 56px;
+}
+
+.day-high {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a2e;
+  display: block;
+}
+
+.day-low {
+  font-size: 12px;
+  color: #aaa;
+  display: block;
+}
+
 
 .day-temp {
   font-size: 15px;
   font-weight: 500;
   color: #1a1a2e;
+}
+
+
+/* RESPONSIVE: small phones under 360px */
+
+@media (max-width: 360px) {
+  .temperature {
+    font-size: 40px;
+  }
+  .search-bar button {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  .weather-card {
+    padding: 18px 14px;
+  }
 }
