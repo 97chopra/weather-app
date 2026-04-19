@@ -74,7 +74,7 @@ cd weather-app
 const API_KEY = 'your_api_key_here';
 ```
 
-3. Open `index.html` in your browser — no build tools or installs needed! ✅
+3. Open `index.html` in your browser — no build tools or installs needed! 
 
 ---
 
