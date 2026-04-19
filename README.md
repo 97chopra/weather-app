@@ -1,94 +1,137 @@
 # 🌤️ Weather App
 
-A real-time weather application built as a personal learning project
-to practise working with REST APIs, vanilla JavaScript, and frontend
-web development fundamentals.
+A real-time weather application built with vanilla JavaScript and the OpenWeatherMap API. Search any city in the world and get live weather conditions, hourly forecasts, and a 7-day outlook — all with a sleek dark glassmorphism UI.
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![OpenWeatherMap](https://img.shields.io/badge/OpenWeatherMap-API-orange?style=for-the-badge)
+
+> 🔗 **Live Demo:** [https://97chopra.github.io/weather-app/](https://97chopra.github.io/weather-app/)
 
 ---
 
-## What I Built
+## 📸 Preview
 
-A fully functional weather app that lets users search any city,
-suburb, or district and get live weather data including current
-conditions, an hourly forecast, and a 7-day outlook.
+![Weather App Screenshot](preview.png)
 
 ---
 
-## Features
+## ✨ Features
 
--  Search any city, suburb or district (e.g. Auckland CBD, Newmarket)
--  Live current temperature, condition, humidity and wind speed
--  Accurate local time for the searched city
--  Hourly forecast for the next 12 hours
--  7-day forecast with daily high and low temperatures
-- 🇳🇿 Defaults to New Zealand cities when no country is specified
--  Full country name support (e.g. "Punjab, India" works correctly)
--  In-page error messages with auto-dismiss
--  Responsive layout for mobile and small screens
--  Dark modern UI with glassmorphism card design
-
----
-
-##  What I Learned
-
-### JavaScript
-- How to fetch data from a REST API using `fetch()` and `async/await`
-- How to handle API errors properly using `response.ok` and `try/catch`
-- Why strict type checking matters (`data.cod !== 200` vs `Number(data.cod) !== 200`)
-- How to run multiple API calls in parallel using `Promise.all()`
-- How to convert and format timestamps using the JavaScript `Date` object
-- How to build a geocoding flow (place name → coordinates → weather)
-- How to parse and group 3-hourly forecast data into daily summaries
-
-### APIs
-- How to use the OpenWeatherMap current weather endpoint
-- How to use the OpenWeatherMap forecast endpoint (`/data/2.5/forecast`)
-- How to use the OpenWeatherMap geocoding endpoint (`/geo/1.0/direct`)
-- Why searching by `lat/lon` is more precise than searching by city name
-- How timezone offsets work and how to display correct local time
-
-### HTML
-- Importance of valid semantic HTML structure
-- How JavaScript connects to the DOM via element IDs
-- Why `<script>` belongs at the bottom of `<body>`
-
-### CSS
-- How CSS custom properties (variables) make theming consistent
-- How to build glassmorphism card effects
-- How to use `radial-gradient` for atmospheric depth and glow
-- How to use `@keyframes` for entrance animations
-- How to use `animation-delay` for staggered reveals
-- How flexbox works for search bars and forecast card rows
-- How to hide scrollbars cross-browser while keeping scroll working
-- How media queries work for responsive design
-
-### Git & Version Control
-- How to write professional commit messages using Conventional Commits
-- How to scope commits to specific files (`feat(css):`, `fix(js):`)
-- How to use `git tag` to mark stable release versions
+- 🔍 **City Search** — Search any city, suburb or district worldwide (e.g. Auckland CBD, Newmarket)
+- 🌡️ **Live Weather** — Real-time temperature, conditions, humidity and wind speed
+- 🕐 **Local Time** — Accurate local time displayed for the searched city
+- ⏱️ **Hourly Forecast** — Next 12 hours at a glance
+- 📅 **7-Day Forecast** — Daily high and low temperatures for the week ahead
+- 🇳🇿 **NZ First** — Defaults to New Zealand cities when no country is specified
+- 🌍 **Full Country Support** — Works with specific regions (e.g. "Punjab, India")
+- ⚠️ **Error Handling** — In-page error messages with auto-dismiss
+- 📱 **Responsive Design** — Works on mobile and desktop
+- 🌙 **Dark Glassmorphism UI** — Modern atmospheric design with depth and glow effects
 
 ---
 
-##  Tech Stack
+## 🛠️ Tech Stack
 
 | Technology | Purpose |
+|---|---|
 | HTML5 | Page structure and semantic markup |
 | CSS3 | Styling, animations, responsive layout |
-| Vanilla JavaScript (ES6+) | Logic, API calls, DOM manipulation |
+| JavaScript (ES6+) | Logic, API calls, DOM manipulation |
 | OpenWeatherMap API | Live weather, forecast and geocoding data |
 | Google Fonts (Outfit) | Modern typography |
 
 ---
 
-##  How to Run
+## 📂 Project Structure
 
-1. Clone or download this repository
-2. Get a free API key from [openweathermap.org](https://openweathermap.org/api)
-3. Open `script.js` and replace the API key on line 1:
-```js
-   const API_KEY = 'your_api_key_here';
 ```
-4. Open `index.html` in your browser — no build tools needed
+weather-app/
+├── index.html      # Main HTML structure
+├── style.css       # Glassmorphism dark theme styles
+├── script.js       # JavaScript logic and API calls
+└── README.md       # Project documentation
+```
 
 ---
 
+## 🚀 Getting Started
+
+### Prerequisites
+- A free API key from [openweathermap.org](https://openweathermap.org/api)
+
+### Run Locally
+
+1. Clone the repository
+```bash
+git clone https://github.com/97chopra/weather-app.git
+cd weather-app
+```
+
+2. Add your API key — open `script.js` and replace line 1:
+```javascript
+const API_KEY = 'your_api_key_here';
+```
+
+3. Open `index.html` in your browser — no build tools or installs needed! ✅
+
+---
+
+## 🔌 APIs Used
+
+| Endpoint | Purpose |
+|---|---|
+| `/weather` | Current weather conditions |
+| `/forecast` | 3-hourly forecast data (grouped into daily summaries) |
+| `/geo/1.0/direct` | Geocoding — converts city name to coordinates |
+
+> Searching by `lat/lon` coordinates is used for more precise results than searching by city name alone.
+
+---
+
+## 💡 Key Concepts Practised
+
+**JavaScript**
+- Fetching REST APIs using `fetch()` with `async/await`
+- Parallel API calls with `Promise.all()` for performance
+- Proper error handling with `response.ok` and `try/catch`
+- Timestamp conversion and local time display using the `Date` object
+- Geocoding flow: place name → coordinates → weather data
+- Grouping 3-hourly forecast data into daily summaries
+
+**CSS**
+- Glassmorphism card effects with `backdrop-filter`
+- Atmospheric depth using `radial-gradient` and glow effects
+- Entrance animations with `@keyframes` and staggered `animation-delay`
+- Cross-browser scrollbar hiding while keeping scroll working
+- Responsive design with media queries and flexbox
+
+**Git & Version Control**
+- Professional commit messages using Conventional Commits
+- Scoped commits (e.g. `feat(css):`, `fix(js):`)
+- Release tagging with `git tag`
+
+---
+
+## 🔮 Future Improvements
+
+- [ ] Add temperature unit toggle (°C / °F)
+- [ ] Save recently searched cities
+- [ ] Add weather map integration
+- [ ] PWA support for offline use
+- [ ] React version with backend proxy for API key security
+
+---
+
+## 👨‍💻 Author
+
+**Aarti Chopra**
+- GitHub: [@97chopra](https://github.com/97chopra)
+- Final Year Student — Software Programming, Data Science & AI
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
